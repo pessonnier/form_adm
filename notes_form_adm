@@ -1,0 +1,37 @@
+2019-04-23
+
+# liens précédents
+https://www.dropbox.com/sh/bd5u25rchj34fww/AAA8y_Xnum2bLVIJSGJADYMda?dl=0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+
+https://notepad.pw/Mfobiginfra
+https://www.dropbox.com/sh/kegxsmoknkj9vxp/AABLPKh_RKZgLtD7kzfooMoDa?dl=0
+
+sudo docker ps
+... container ID
+ps : n'oublie pas ton mot de passe sinon j y peux rien
+sudo docker exec -it containerid bash ou hive ou ce que tu veux ...
+
+ALTER TABLE toto    
+set serde 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+WITH SERDEPROPERTIES ('field.delim' = ',');
+https://hds-streaming.com/episodes/game-of-thrones-saison-8-episode-1-streaming/
+
+http://localhost:8888/jobbrowser/``
+
+https://logisima.developpez.com/tutoriel/nosql/neo4j/introduction-neo4j/
+
+select * from regions r, departments d where r.code = d.region_code
+
+sudo apt install openjdk-8-jdk
+
+
+https://github.com/dpkp/kafka-python
+
+# datalake
+multiple source
+ingérer
+structurer
+netoyer
+extraire
+ML
