@@ -35,3 +35,12 @@ structurer
 netoyer
 extraire
 ML
+
+# hadoop
+hive utilise mapreduce
+impala utilise yarn
+
+## hdfs
+manipulation de fichier avec
+- hdfs dfs -XXX
+- hadoop fs -XXX
