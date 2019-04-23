@@ -44,3 +44,6 @@ impala utilise yarn
 manipulation de fichier avec
 - hdfs dfs -XXX
 - hadoop fs -XXX
+
+## hbase
+hbase shell
