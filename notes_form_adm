@@ -38,7 +38,7 @@ ML
 
 # hadoop
 hive utilise mapreduce
-impala utilise yarn
+impala utilise directement yarn
 
 ## hdfs
 manipulation de fichier avec
@@ -47,3 +47,39 @@ manipulation de fichier avec
 
 ## hbase
 hbase shell
+
+# hive
+
+create table wh_visits 
+(lname string,
+ fname string,
+ time_of_arrival string,
+ appt_scheduled_time string,
+ meeting_location string,
+ info_comment string)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+
+hive -f xxx.hive
+
+select input__file__name, BLOCK__OFFSET__INSIDE__FILE, lname from wh_visits;
+
+create table names (id int, name string)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t';
+
+hdfs dfs -put /src/names.txt /user/hive/warehouse/names
+drop table names;
+le dossier est supprimé
+
+create external table names2 (id int, name string)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '\t'
+location '/user/cloudera/names2';
+
+load data inpath '/user/cloudera/entree/names.txt' into table names2;
+le fichier est déplacé
+
+drop table names2;
+le fichier reste dans /user/cloudera/names2
+
