@@ -83,3 +83,13 @@ le fichier est déplacé
 drop table names2;
 le fichier reste dans /user/cloudera/names2
 
+select * from wh_visits where time_of_arrival !=""
+order by unix_timestamp(time_of_arrival, 'MM/dd/yyyy hh:mm');
+
+explain extended select count(info_comment) as n, info_comment from wh_visits
+group by info_comment
+order by n desc
+limit 10;
+
+# spark
+docker run -v `pwd`:/home/guest/host -p 4040:4040 -p 8889:8888 -p 23:22 -ti --privileged yannael/kafka-sparkstreaming-cassandra
