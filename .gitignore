@@ -4,3 +4,5 @@ nyse_daily_prices_k.csv
 nyse_dividends_k.csv
 names.txt
 visits.txt
+.ipynb_checkpoints/testspark-checkpoint.ipynb
+kddcup.data_10_percent.gz

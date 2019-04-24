@@ -91,5 +91,66 @@ group by info_comment
 order by n desc
 limit 10;
 
+## join
+
+create table nyse_data (exchanges string, symbol string, trade_date string, open float, high float, 
+low float, close float, volume int, adj_close float) 
+row format delimited fields terminated by ',';
+
+load data local inpath '/src/nyse_daily_prices_k.csv' into table nyse_data;
+
+create table dividends (exchanges string, symbol string, trade_date string, dividend float) 
+row format delimited fields terminated by ',';
+
+load data local inpath '/src/nyse_dividends_k.csv' into table dividends;
+
+create table stock_aggregates (symbol string, year string, high float, low float, 
+average_close float, total_dividends float);
+
+insert overwrite table stock_aggregates
+select a.symbol, year(a.trade_date), 
+ max(a.high),
+ min(a.low),
+ avg(a.close),
+ sum(b.dividend)
+from nyse_data a
+left outer join dividends b
+on (a.symbol = b.symbol and a.trade_date = b.trade_date)
+group by a.symbol, year(a.trade_date);
+
+Query ID = cloudera_20190424094949_5cb8462a-6ebd-451d-ae0a-71b78b6ab2d5
+Total jobs = 1
+Execution log at: /tmp/cloudera/cloudera_20190424094949_5cb8462a-6ebd-451d-ae0a-71b78b6ab2d5.log
+2019-04-24 09:56:38	Starting to launch local task to process map join;	maximum memory = 932184064
+2019-04-24 09:56:39	Dump the side-table for tag: 1 with group count: 3175 into file: file:/tmp/cloudera/76d52642-b86f-48da-8d3a-3253d338898d/hive_2019-04-24_09-56-35_592_814264461181226083-1/-local-10003/HashTable-Stage-2/MapJoin-mapfile01--.hashtable
+2019-04-24 09:56:39	Uploaded 1 File to: file:/tmp/cloudera/76d52642-b86f-48da-8d3a-3253d338898d/hive_2019-04-24_09-56-35_592_814264461181226083-1/-local-10003/HashTable-Stage-2/MapJoin-mapfile01--.hashtable (118017 bytes)
+2019-04-24 09:56:39	End of local task; Time Taken: 0.838 sec.
+Execution completed successfully
+MapredLocal task succeeded
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 1
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1556022841490_0007, Tracking URL = http://quickstart.cloudera:8088/proxy/application_1556022841490_0007/
+Kill Command = /usr/lib/hadoop/bin/hadoop job  -kill job_1556022841490_0007
+Hadoop job information for Stage-2: number of mappers: 1; number of reducers: 1
+2019-04-24 09:56:44,019 Stage-2 map = 0%,  reduce = 0%
+2019-04-24 09:56:50,221 Stage-2 map = 100%,  reduce = 0%, Cumulative CPU 4.19 sec
+2019-04-24 09:56:56,391 Stage-2 map = 100%,  reduce = 100%, Cumulative CPU 6.03 sec
+MapReduce Total cumulative CPU time: 6 seconds 30 msec
+Ended Job = job_1556022841490_0007
+Loading data to table default.stock_aggregates
+Table default.stock_aggregates stats: [numFiles=1, numRows=1188, totalSize=41109, rawDataSize=39921]
+MapReduce Jobs Launched: 
+Stage-Stage-2: Map: 1  Reduce: 1   Cumulative CPU: 6.03 sec   HDFS Read: 14798359 HDFS Write: 41194 SUCCESS
+Total MapReduce CPU Time Spent: 6 seconds 30 msec
+OK
+Time taken: 22.06 seconds
+
+
 # spark
 docker run -v `pwd`:/home/guest/host -p 4040:4040 -p 8889:8888 -p 23:22 -ti --privileged yannael/kafka-sparkstreaming-cassandra
