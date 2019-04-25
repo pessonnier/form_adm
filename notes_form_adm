@@ -154,3 +154,55 @@ Time taken: 22.06 seconds
 
 # spark
 docker run -v `pwd`:/home/guest/host -p 4040:4040 -p 8889:8888 -p 23:22 -ti --privileged yannael/kafka-sparkstreaming-cassandra
+
+# cassandra
+lancement du premier noeud
+
+docker run --name cas1 -p 9042:9042 -e CASSANDRA_CLUSTER_NAME=MyCluster -e CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e CASSANDRA_DC=datacenter1 -d cassandra
+
+récupèrer l'adresse ip du docker en cours d'execution
+
+docker inspect --format='{{ .NetworkSettings.IPAddress }}' cas1
+
+172.17.0.4
+
+
+on l'ajoutera comme commande pour chacun des noeuds qu'on lancera
+
+docker run --name cas2 -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' cas1)" -e CASSANDRA_CLUSTER_NAME=MyCluster -e CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e CASSANDRA_DC=datacenter1 -d cassandra
+ 
+docker run --name cas3 -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' cas1)" -e CASSANDRA_CLUSTER_NAME=MyCluster -e CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e CASSANDRA_DC=datacenter2 -d cassandra
+
+sudo docker run --name cas2 -e CASSANDRA_SEEDS="172.17.0.4" -e CASSANDRA_CLUSTER_NAME=MyCluster -e CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e CASSANDRA_DC=datacenter1 -d cassandra
+ 
+sudo docker run --name cas3 -e CASSANDRA_SEEDS="172.17.0.4" -e CASSANDRA_CLUSTER_NAME=MyCluster -e CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch -e CASSANDRA_DC=datacenter2 -d cassandra
+
+
+pour verifier l'etat des noeuds lancés
+
+docker exec -ti cas1 nodetool status
+
+
+
+
+on se connect en cql shell sur le cas1
+
+docker exec -ti cas1 cqlsh
+
+CREATE KEYSPACE mykeyspace WITH replication = {'class' : 'NetworkTopologyStrategy','datacenter1' : 1,'datacenter2' : 1};
+
+CREATE TABLE mykeyspace.mytable (id int primary key, name text);
+
+
+une fois le keyspace et la table créés, verifier l'etat du noeud a nouveau
+
+docker exec -ti cas1 nodetool status mykeyspace
+
+
+on peut mnt inserer la donnée sur un noeud et elle sera disponible dans les autres noeuds a chaque requête
+
+
+https://www.dropbox.com/sh/bd5u25rchj34fww/AAA8y_Xnum2bLVIJSGJADYMda?dl=0&lst=
+
+https://www.dropbox.com/sh/bd5u25rchj34fww/AAA8y_Xnum2bLVIJSGJADYMda?dl=0
+de mustapha fonsau (next challenge)
